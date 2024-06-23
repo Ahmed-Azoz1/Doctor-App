@@ -80,11 +80,9 @@ const BookingSection = ({doctor}) => {
 
         GlobalApi.makeAppointment(data)
             .then((res) => {
-            console.log(res);
             showToast('success', 'Appointment Booked', 'Your appointment has been successfully booked.');
             })
             .catch((error) => {
-            console.error(error);
             showToast('error', 'Booking Failed', 'There was an error booking your appointment.');
         });
     }

@@ -8,25 +8,31 @@ import Toast from 'react-native-toast-message'
 
 const Appointment = () => {
     
-    const {isLoaded,isSignedIn,user} = useUser();
-    const [appointmentList,setAppointmentList] = useState([]);
-    const allAppointments = async ()=>{
-        await GlobalApi.getUserAppointment(user?.primaryEmailAddress?.emailAddress).then((res)=>{
-            setAppointmentList(res?.data?.data)
-        })
+    const { isLoaded, isSignedIn, user } = useUser();
+    const [appointmentList, setAppointmentList] = useState([]);
+    
+    const allAppointments = async () => {
+        if (user?.primaryEmailAddress?.emailAddress) {
+            try {
+                const res = await GlobalApi.getUserAppointment(user?.primaryEmailAddress?.emailAddress);
+                setAppointmentList(res?.data?.data);
+            } catch (error) {
+                console.error('Error fetching appointments:');
+            }
+        }
     }
 
-
-    useEffect(()=>{
-        if(user?.primaryEmailAddress.emailAddress){
+    useEffect(() => {
+        if (user?.primaryEmailAddress?.emailAddress) {
             allAppointments();
         }
-    },[user])
+    }, [user]);
 
     const handleDeleteAppointment = async (id) => {
         try {
             await GlobalApi.deleteAppointment(id);
-            setAppointmentList(appointmentList.filter(appointment => appointment.id !== id));
+            setAppointmentList(prevList => prevList.filter(appointment => appointment.id !== id));
+            console.log("Appointment deleted successfully");
             showToast('success', 'Appointment Deleted', 'Your appointment has been successfully Deleted.');
         } catch (error) {
             console.error('Error deleting appointment:', error);
@@ -44,19 +50,20 @@ const Appointment = () => {
     };
 
     return (
-        <View style={{padding:15}}>
-            <PageHeader title={'All Appointments'} backButton={false}/>
+        <View style={{ padding: 15 }}>
+            <PageHeader title={'All Appointments'} backButton={false} />
 
             <FlatList
-            showsVerticalScrollIndicator={false}
-            data={appointmentList}
-            renderItem={({item})=>(
-                <AppointmentCardItem appointment={item} onDelete={handleDeleteAppointment}/>
-            )}
+                showsVerticalScrollIndicator={false}
+                data={appointmentList}
+                renderItem={({ item }) => (
+                    <AppointmentCardItem appointment={item} onDelete={handleDeleteAppointment} />
+                )}
+                keyExtractor={item => item.id.toString()}
             />
             <Toast ref={(ref) => Toast.setRef(ref)} />
         </View>
-    )
+    );
 }
 
-export default Appointment
+export default Appointment;

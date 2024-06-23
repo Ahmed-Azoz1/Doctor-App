@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
-import Colors from '../utils/Colors'
+import React from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 const DoctorCardItem = ({doctor}) => {

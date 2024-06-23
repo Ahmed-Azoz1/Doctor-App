@@ -1,12 +1,14 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import SubHeading from './SubHeading'
 import GlobalApi from '../../utils/GlobalApi'
 import DoctorItem from './DoctorItem'
+import { useNavigation } from '@react-navigation/native'
 
 const TopDoctors = () => {
 
     const [topDoctors,setTopDoctors] = useState([])
+    const navigation = useNavigation();
 
     const getTopDoctors=()=>{
         GlobalApi.getTopDoctors().then((res)=>{
@@ -26,7 +28,11 @@ const TopDoctors = () => {
                 showsHorizontalScrollIndicator={false}
                 data={topDoctors}
                 renderItem={({item,index})=>(
-                    <DoctorItem  doctor={item}/>
+                    <TouchableOpacity onPress={()=>navigation.navigate('doctor-details',{
+                        doctor:item
+                    })}>
+                        <DoctorItem  doctor={item}/>
+                    </TouchableOpacity>
                 )}
             />
         </View>
